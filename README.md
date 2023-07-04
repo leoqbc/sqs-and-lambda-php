@@ -5,3 +5,7 @@ Repo from my [YouTube video SQS and Lambda with PHP](https://www.youtube.com/wat
 To test dependencies use ```composer install```
 
 ## This is a skeleton to Serverless Lambda PHP
+
+## Other videos
+
+- [Creating a Repository on AWS Elastic Container Registry (ECR) `~17:50`](https://youtu.be/QsgUaMlsnEc?t=1071)
