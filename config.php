@@ -13,4 +13,7 @@ return [
         'Username' => env('PHP_MAILER_USERNAME'),
         'Password' => env('PHP_MAILER_PASSWORD'),
     ],
+    'log' => [
+        'base_dir' => env('LOG_BASE_DIR', __DIR__ . '/logs/'),
+    ]
 ];

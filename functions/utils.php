@@ -90,7 +90,9 @@ if (!function_exists('logInfo')) {
             PHP_EOL,
         ];
 
-        $logFile = BASE_PATH . '/logs/log-info.log';
+        $logBaseDir = config('log.base_dir');
+
+        $logFile = "{$logBaseDir}/log-info.log";
 
         file_put_contents($logFile, $logContent, FILE_APPEND);
     }
