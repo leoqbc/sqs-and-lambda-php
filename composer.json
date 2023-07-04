@@ -1,10 +1,14 @@
 {
     "require": {
-        "mailjet/mailjet-apiv3-php": "^1.5"
+        "mailjet/mailjet-apiv3-php": "^1.5",
+        "phpmailer/phpmailer": "^6.8"
     },
     "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        },
         "files": [
-            "config.php"
+            "boot.php"
         ]
     }
 }

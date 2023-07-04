@@ -1,9 +1,12 @@
 version: "3.8"
 services:
     php:
+        build:
+            context: .
+            dockerfile: Dockerfile
         image: leoqbc/php8-lambda-runtime-alpine:latest
         ports:
             - 9000:8080
         volumes:
-            - .:/var/task
+            - .:/var/task:cached
         command: index

@@ -1,8 +1,14 @@
-basic test request
+# VSCode Extension ID: humao.rest-client
+
+####
+# basic test request
 curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
 
-SQS test request
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{
+####
+#SQS test request
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{
   "Records": [
     {
       "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",

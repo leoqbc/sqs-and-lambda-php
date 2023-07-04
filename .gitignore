@@ -1,2 +1,4 @@
-vendor/config.php
-config.php
+vendor/
+env.php
+*no*commit*
+.env
