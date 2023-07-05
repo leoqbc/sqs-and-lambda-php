@@ -8,5 +8,7 @@ services:
         ports:
             - 9000:8080
         volumes:
+            - .docker-data/entrypoints/docker-entrypoint.sh:/docker-entrypoint.sh
             - .:/var/task:cached
+            - .docker-data/bash_users/root:/root:cached
         command: index

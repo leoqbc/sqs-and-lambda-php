@@ -1,6 +1,6 @@
 FROM leoqbc/php8-lambda-runtime-alpine:latest
 
-RUN apk add bash curl wget git zsh
+RUN apk add bash curl wget git zsh nano
 
 RUN curl https://getcomposer.org/download/latest-2.2.x/composer.phar -o /usr/bin/composer
 RUN chmod +x /usr/bin/composer
