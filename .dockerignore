@@ -1,0 +1,13 @@
+## https://docs.docker.com/engine/reference/builder/#dockerignore-file
+# comment
+*/temp*
+*/*/temp*
+temp?
+
+*.md
+!README.md
+
+*no*commit*
+.env
+build_and_push_to_aws_ecr.sh
+!README*.md
