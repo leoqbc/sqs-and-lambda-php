@@ -1,5 +1,3 @@
-laravel-app
-!laravel-app/.gitkeep
 vendor/
 env.php
 *no*commit*
