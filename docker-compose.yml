@@ -1,14 +1,21 @@
 version: "3.8"
 services:
     php:
+        environment:
+            - PHP_VERSION=8.1
+            - LAMBDA_HANDLER_FUNCTION=${LAMBDA_HANDLER_FUNCTION}
         build:
             context: .
             dockerfile: Dockerfile
-        image: leoqbc/php8-lambda-runtime-alpine:latest
+            args:
+                - LAMBDA_HANDLER_FUNCTION=${LAMBDA_HANDLER_FUNCTION}
+        image: tiagofranca/base-aws-php:latest
         ports:
-            - 9000:8080
+            - ${LAMBDA_OFFLINE_LOCAL_PORT:-9000}:8080
         volumes:
-            - .docker-data/entrypoints/docker-entrypoint.sh:/docker-entrypoint.sh
             - .:/var/task:cached
             - .docker-data/bash_users/root:/root:cached
-        command: index
+
+        ## É o equivalente a 'CMD' no Dockerfile
+        ## Caso vazio, executará o que está definido no CMD do Dockerfile
+        command: ${LAMBDA_HANDLER_FUNCTION}

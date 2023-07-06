@@ -1,0 +1,68 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ *
+ */
+
+echo date('c') . PHP_EOL;
+echo getenv('_HANDLER') . PHP_EOL;
+// echo var_export($_SERVER ?? [], true) . PHP_EOL;
+
+require __DIR__ . '/vendor/autoload.php';
+
+// This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
+do {
+    // Ask the runtime API for a request to handle.
+    $request = getNextRequest();
+
+    // Obtain the function name from the _HANDLER environment variable and ensure the function's code is available.
+    $lambdaTaskRoot = getenv('LAMBDA_TASK_ROOT');
+    $handler = getenv('_HANDLER');
+    $handlerData = explode('.', $handler);
+    $handlerFile = $handlerData[0] ?? $handler;
+    $handlerFunction = $handlerData[1] ?? $handler;
+    $handlerFilePath = "{$lambdaTaskRoot}/{$handlerFile}.php";
+
+    echo 'lambdaTaskRoot: ' . var_export($lambdaTaskRoot, true) . PHP_EOL;
+    echo 'handlerFile: ' . var_export($handlerFile, true) . PHP_EOL;
+    echo 'handlerFilePath: ' . var_export($handlerFilePath, true) . PHP_EOL;
+    echo 'handlerFunction: ' . var_export($handlerFunction, true) . PHP_EOL;
+    echo 'handlerData: ' . var_export($handlerData, true) . PHP_EOL;
+
+    if (!file_exists($handlerFilePath)) {
+        throw new \Exception("File '{$handlerFilePath}' not exists.", 1);
+    }
+
+    require_once  $handlerFilePath;
+
+    // Execute the desired function and obtain the response.
+    $response = $handlerFunction($request['payload']);
+
+    echo PHP_EOL;
+    echo 'response: ' . var_export($response, true) . PHP_EOL;
+    echo PHP_EOL;
+
+    // Submit the response back to the runtime API.
+    sendResponse($request['invocationId'], $response);
+} while (true);
+
+function getNextRequest(): array
+{
+    $client = new \GuzzleHttp\Client();
+    $response = $client->get('http://' . getenv('AWS_LAMBDA_RUNTIME_API') . '/2018-06-01/runtime/invocation/next');
+
+    return [
+        'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
+        'payload' => json_decode((string) $response->getBody(), true)
+    ];
+}
+
+function sendResponse($invocationId, $response): void
+{
+    $client = new \GuzzleHttp\Client();
+    $client->post(
+        'http://' . getenv('AWS_LAMBDA_RUNTIME_API') . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
+        ['body' => $response]
+    );
+}

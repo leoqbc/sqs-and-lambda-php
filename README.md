@@ -1,18 +1,96 @@
-# SQS and Lambda PHP
-Repo from my [YouTube video SQS and Lambda with PHP](https://www.youtube.com/watch?v=kl6Aghe71mY)
+# Using repo
 
-# Install
-To test dependencies use ```composer install```
+```sh
+## Porta usada localmente para testes
+LAMBDA_OFFLINE_LOCAL_PORT=9000
 
-## This is a skeleton to Serverless Lambda PHP
+## Função que executará dentro do container
+LAMBDA_HANDLER_FUNCTION=handler.helloWorld
+```
 
-## Other videos
+## Plain function file
+```php
+// examples/app/index.php
 
-- [Creating a Repository on AWS Elastic Container Registry (ECR) `~17:50`](https://youtu.be/QsgUaMlsnEc?t=1071)
+function func(array $event): string
+{
+    return json_encode([
+        'statusCode' => 200, // or other
+        'headers' => [
+            'any_header' => 'value'
+        ],
+        'body' => 'Success',
+    ]);
+}
+```
 
+## CMD params
 
-## Notes
-### Ephemeral storage
+> Se o arquivo for `examples/app/index.php` e a função alvo for `func`, o **CMD** precisa ser `examples/app/index.func`.
+>
+> Exemplo:
 
-> By default, Lambda allocates 512 MB for a function’s /tmp directory. You can increase or decrease this amount using the Ephemeral storage (MB)
-> setting. To configure the size of a function’s /tmp directory, set a value between 512 MB and 10,240 MB in 1-MB increments.
+```Dockerfile
+
+CMD [ "examples/app/index.func" ]
+```
+
+## Rebuild and deployment via CLI
+
+> **( ! )** First copy `utils/build-and-push-demo.sh` to `utils/build-and-push.sh` and change info.
+```sh
+bash ./utils/build-and-push.sh
+```
+
+### Dockerfile `(aqui que você tem que se atentar quando for subir para o ECR)` se for usar no Lambda
+
+```Dockerfile
+# No docker-compose, essa linha vai em 'command:'
+# Explicando: php-app/lambdaRunnerFile.handler
+# php-app/ -> Pasta onde está o arquivo alvo
+# lambdaRunnerFile -> arquivo alvo 'lambdaRunnerFile.php'
+# handler -> função definida dentro do arquivo alvo
+CMD [ "php-app/lambdaRunnerFile.handler" ]
+```
+
+### HTTP requests (demo)
+
+- Se usar o VSCode, instale a extensão `humao.rest-client`
+```sh
+# VSCode Extension ID: humao.rest-client
+@id:humao.rest-client
+```
+
+##### HTTP test request with SQS body
+```http
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "Hello from Lambda test!!",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {
+        "subject":"Assunto rest client",
+        "sleep":4,
+        "e":"eeeh"
+      },
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}'
+```
+
+##### Basic test request
+```http
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+```
