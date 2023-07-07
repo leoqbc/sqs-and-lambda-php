@@ -3,3 +3,4 @@ env.php
 *no*commit*
 .env
 build_and_push_to_aws_ecr.sh
+.vscode

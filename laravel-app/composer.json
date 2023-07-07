@@ -45,7 +45,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "pint": "./vendor/laravel/pint/builds/pint --config=./pint.json",
+        "pint:test": "@pint --test -v"
     },
     "extra": {
         "laravel": {

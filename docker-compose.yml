@@ -13,6 +13,7 @@ services:
         ports:
             - ${LAMBDA_OFFLINE_LOCAL_PORT:-9000}:8080
         volumes:
+            - ./.docker-data/php/custom-options.ini:/etc/php.d/20-custom-options.ini:cached
             - .:/var/task:cached
             - .docker-data/bash_users/root:/root:cached
 
